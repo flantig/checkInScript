@@ -31,7 +31,7 @@ on doing so when I make sure that this works first.</h5>
 </blockquote>
 
 <h2>Usage</h2>
-<h4>Make sure to use pyinstaller for your respective OS and to install selenium, it's the only library you'll need to install for it</h4>
+<h4>Make sure to use pyinstaller for your respective OS and to install selenium, it's the only library you'll need to install</h4>
 <h5>Windows</h5>
 After creating an executable with pyinstaller you can use Window's built in task scheduler to run this script when you have
 classes
