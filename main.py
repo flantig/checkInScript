@@ -1,6 +1,6 @@
-# Date-Created: 7/28/2020
+# Date-Created: 10/13/2020
 # Original Creator: Franklin
-# Last Edited: 7/28/2020
+# Last Edited: 10/13/2020
 # Current Editors: Franklin
 
 from selenium import webdriver
@@ -20,7 +20,7 @@ Documentation Start
 
 ************************************************************************************************        
 ************************************************************************************************        
-DO NOT upload this file to "The Manual" google doc without removing credentials, please follow the instructions listed in "The Manual"
+DO NOT SHARE YOUR CONFIG.JSON WITH ANYONE YOU SAUERKRAUT LOOKING CRETIN
 ************************************************************************************************    
 ************************************************************************************************ 
 
@@ -31,13 +31,13 @@ you use selenium's WebDriverWait(driver, timeout).until(element) functionality f
 sleep timer if necessary like the following code block:
 
     timeout = 0
-    while not os.path.exists('BL34C-Bills Overdue From Vendor - Excel Format.xlsx') and timeout != 30:
+    while not os.path.exists('config.json') and timeout != 30:
         timeout = timeout + 1
         time.sleep(1)           
 
 @param webdriver: Allows you to use selenium to traverse your browser
 
-@class generateExceptionReport(): If you want to add exception handling, please add it to this class. It acts just like a switch
+@class generateExceptionReport(): If you want to add exception handling, please refer to this class. It acts just like a switch
 statement and can be reused for any portion of the code that requires error handling. It outputs an error log file and a screenshot
 of the page in the location the exception was raised. 
 
@@ -154,3 +154,5 @@ print("It's running..")
 
 starter(username, password)
 checkin(classname)
+
+input('Press Enter to Continue...')
