@@ -52,7 +52,7 @@ Documentation End
 
 """ToDo: Whenever I have class next, I'll actually add in the bit for the check in button"""
 
-with open('config/config.json') as f:
+with open('config.json') as f:
     config = json.load(f)
 
 if not config['userProfile'] == " ":
@@ -85,7 +85,7 @@ class generateExceptionReport(object):
         try:
             os.mkdir(home + "\ErrorLogs\\")
         except FileExistsError:
-            print("It does exist, moving along...")
+            print("Error log directory exists, moving along...")
         method_name = 'exception_' + exceptionName
         method = getattr(self, method_name, lambda: 'Invalid')
         return method()
@@ -98,8 +98,8 @@ class generateExceptionReport(object):
         errorLog.write("It seems we've run into a NoSuchElementException \n \n")
         errorLog.write("If you got here, it probably means that we couldn't find a checkin button.\n")
         errorLog.write("So you either already checked in or the professor hasn't actually put up attendance yet.")
-        print("check the desktop, there should be a log folder on it at: " + path)
-        time.sleep(5)
+        print("\n \n check the desktop, there should be a log folder on it at: " + path)
+        time.sleep(20)
         driver.quit()
         sys.exit()
 
@@ -111,8 +111,9 @@ class generateExceptionReport(object):
         errorLog.write("It seems we've run into a TimeoutException \n \n")
         errorLog.write("Looks like the browser took too long to load the page.\n")
         errorLog.write("Either the page broke or the connection is unusually slow.")
-        print("check the desktop, there should be a log folder on it at: " + path)
-        time.sleep(5)
+
+        print("\n \n check the desktop, there should be a log folder on it at: " + path)
+        time.sleep(20)
         driver.quit()
         sys.exit()
 
@@ -167,7 +168,6 @@ def checkin(className):
 
 
     windows = driver.window_handles
-    print("opened windows length: ", len(windows))
     driver.switch_to.window(driver.window_handles[1])
     url = driver.current_url
     print("Current Page Title is : %s" %driver.title)
