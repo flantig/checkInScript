@@ -9,6 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
+from pathlib import Path
 import json
 from datetime import datetime
 import time
@@ -74,20 +76,48 @@ class IncorrectUrlException(Exception):
     pass
 
 class generateExceptionReport(object):
+
+
     def generateExceptionReport(self, exceptionName):
         print("There has been an error, generating a log...")
         print("Creating an error log directory if it doesn't exist...")
+        home = str(Path.home())
         try:
-            os.mkdir("C:/Users/Home/Desktop/ErrorLogs/")
+            os.mkdir(home + "\ErrorLogs\\")
         except FileExistsError:
             print("It does exist, moving along...")
         method_name = 'exception_' + exceptionName
         method = getattr(self, method_name, lambda: 'Invalid')
         return method()
 
+    def exception_NoSuchElementException(self):
+        home = str(Path.home())
+        path = home + "\ErrorLogs\IncorrectUrlException" + now.strftime("%m-%d-%Y-%I-%M-%S")
+        driver.get_screenshot_as_file(path + ".png")
+        errorLog = open(path + ".txt", "w+")
+        errorLog.write("It seems we've run into a NoSuchElementException \n \n")
+        errorLog.write("If you got here, it probably means that we couldn't find a checkin button.\n")
+        errorLog.write("So you either already checked in or the professor hasn't actually put up attendance yet.")
+        print("check the desktop, there should be a log folder on it at: " + path)
+        time.sleep(5)
+        driver.quit()
+        sys.exit()
+
+    def exception_TimeoutException(self):
+        home = str(Path.home())
+        path = home + "/ErrorLogs/IncorrectUrlException" + now.strftime("%m-%d-%Y-%I-%M-%S")
+        driver.get_screenshot_as_file(path + ".png")
+        errorLog = open(path + ".txt", "w+")
+        errorLog.write("It seems we've run into a TimeoutException \n \n")
+        errorLog.write("Looks like the browser took too long to load the page.\n")
+        errorLog.write("Either the page broke or the connection is unusually slow.")
+        print("check the desktop, there should be a log folder on it at: " + path)
+        time.sleep(5)
+        driver.quit()
+        sys.exit()
+
 def starter(username, password):
     timeout = 5
-    print("It's running..")
     try:
         target = "https://templeu.instructure.com"
         driver.get(target)
@@ -146,6 +176,21 @@ def checkin(className):
         WebDriverWait(driver, timeout).until(authorize)
         authorize = driver.find_element_by_xpath("//*[@id='oauth2_accept_form']/div/input")
         authorize.click()
+    try:
+        checkin = EC.presence_of_element_located((By.XPATH,"/html/body/div/div[1]/div[2]"))
+        WebDriverWait(driver, timeout).until(checkin)
+    except TimeoutException:
+        errorHandle = generateExceptionReport()
+        errorHandle.generateExceptionReport("TimeoutException")
+
+    try:
+        checkin = driver.find_element_by_xpath("//*[@id='student_check_in']")
+        checkin.click()
+        driver.quit()
+    except NoSuchElementException:
+        errorHandle = generateExceptionReport()
+        errorHandle.generateExceptionReport("NoSuchElementException")
+        driver.quit()
 
 
 
@@ -154,5 +199,3 @@ print("It's running..")
 
 starter(username, password)
 checkin(classname)
-
-input('Press Enter to Continue...')
