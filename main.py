@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 import json
 from datetime import datetime
 import time
@@ -40,38 +41,28 @@ sleep timer if necessary like the following code block:
 statement and can be reused for any portion of the code that requires error handling. It outputs an error log file and a screenshot
 of the page in the location the exception was raised. 
 
-@function closeNonSenseEnergySaverDialogBox(): Sometimes energy cap will load up some energy saver pop-up upon signing in and
-it does not leave even if you traverse to an entirely different page. Hopefully, they don't introduce another of this kind so
-that you don't have to implement another workaround just to close it but it isn't too bad if you do. If the dialog box ever
-disappears for good you can remove the function call at the bottom or just leave it. It'll eventually timeout on its own anyway.
+@json config.json: You're going to need to add the necessary information for your own login. If you have 2FA you're going to need to add your
+browser's user profile. If you don't need 2FA, you can leave it as is.
 
-@functions tickboxes() && enterfields(): Energy cap will remember he settings you selected for any given report on a user to
-user basis. The functions are written so that if someone, new or withstanding, would like to modify the code for their own
-energy cap account it can account for freshly made or saved entries. That's why it clears entries and checks if the boxes
-are ticked before proceeding.
-
-@function mailit(): HTML is sick. Gmail doesn't natively support tables so the options you're left with is copy and pasting one
-from google docs or using html to format the table into the email using pandas dataframes.
-
-@param .format(df.to_html()): .format() takes a curly braced parameter inside of quotes and fills it in. In this case, it takes
-the entire html formatting pandas spits out for the datatable and fills it in where {0} is.
-
-@function cleanup(): Always make sure to quit out of the webdriver to save memory and also to just close out the web browser
-the idea of this program is to make it run and leave no trace of it ever having been ran. It's simply more convenient to the end
-user to not have to close out some dialog box.
-
-@param BooleanHoliday: This is to save coworkers the headache of receiving an email on their break. Boolean Holiday also sounds
-like a great band name.
 
 Documentation End
 """
 
-with open('config.json') as f:
+"""ToDo: Whenever I have class next, I'll actually add in the bit for the check in button"""
+
+with open('config/config.json') as f:
     config = json.load(f)
 
+if not config['userProfile'] == " ":
+    options = webdriver.ChromeOptions()
+    options.add_argument(config['userProfile'])
+    driver = webdriver.Chrome(executable_path= config['webdriver'], chrome_options= options)
+    driver.set_page_load_timeout(60)
+else:
+    driver = webdriver.Chrome(config['webdriver'])
+    driver.set_page_load_timeout(60)
 
-driver = webdriver.Chrome("D:\\Documents\\chromedriver_win32\\chromedriver.exe")
-driver.set_page_load_timeout(60)
+
 username= config['username']
 password= config['password']
 classname = config['class']
@@ -87,38 +78,12 @@ class generateExceptionReport(object):
         print("There has been an error, generating a log...")
         print("Creating an error log directory if it doesn't exist...")
         try:
-            os.mkdir("C:/Users/Home/Desktop/BillOverDueErrorLogs/")
+            os.mkdir("C:/Users/Home/Desktop/ErrorLogs/")
         except FileExistsError:
             print("It does exist, moving along...")
         method_name = 'exception_' + exceptionName
         method = getattr(self, method_name, lambda: 'Invalid')
         return method()
-
-    def exception_IncorrectUrlException(self):
-        path = "C:/Users/Home/Desktop/BillOverDueErrorLogs/IncorrectUrlException" + now.strftime("%m-%d-%Y-%I-%M-%S")
-        driver.get_screenshot_as_file(path + ".png")
-        errorLog = open(path + ".txt", "w+")
-        errorLog.write("It seems we've run into an IncorrectUrlException \n \n")
-        errorLog.write("This was the webpage you were sent to: " + driver.current_url + " \n")
-        errorLog.write("Make sure your credentials don't need to be reset and that the url hasn't changed.")
-        print("check the desktop, there should be a log folder on it")
-        time.sleep(3)
-        driver.quit()
-        sys.exit()
-
-
-    def exception_TimeoutException(self):
-        path = "C:/Users/Home/Desktop/BillOverDueErrorLogs/TimeoutException" + now.strftime("%m-%d-%Y-%I-%M-%S")
-        driver.get_screenshot_as_file(path + ".png")
-        errorLog = open(path + ".txt", "w+")
-        errorLog.write("It seems we've run into a TimeoutException trying to request the bill report url \n \n")
-        errorLog.write("This was the webpage you were sent to: " + driver.current_url + " \n")
-        errorLog.write("It's possible the url for the bill report is currently somewhere else or the page never loaded.")
-        print("check the desktop, there should be a log folder on it")
-        time.sleep(3)
-        driver.quit()
-        sys.exit()
-
 
 def starter(username, password):
     timeout = 5
@@ -135,7 +100,6 @@ def starter(username, password):
 
     if ("https://fim.temple.edu/idp/" in url):
         signin(username, password)
-
 
 def signin(username, password):
     timeout = 5
