@@ -1,4 +1,4 @@
-#Qwickly Auto Attendance Script
+<h1>Qwickly Auto Attendance Script</h1>
 <h5>As the semester goes on professors leave the attendance open for people to 
 check in as they tune into the class but don't often remind students. This
 makes sure you don't forget.</h5>
@@ -25,7 +25,9 @@ on doing so when I make sure that this works first.</h5>
   <br>
   <br>
   "userProfile": " " //If you have 2FA you'll need your personal chrome browser's profile path
+  <br>
 }
+
 </blockquote>
 
 <h2>Usage</h2>
